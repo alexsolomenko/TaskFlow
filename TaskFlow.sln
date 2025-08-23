@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36221.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Taskflow.API", "Taskflow.API\Taskflow.API.csproj", "{E51AA05A-76F0-4D04-9E41-5D9D912762F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Taskflow.Data", "Taskflow.Data\Taskflow.Data.csproj", "{C2A2492C-29CC-4726-9C8C-A04544DDF172}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E51AA05A-76F0-4D04-9E41-5D9D912762F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E51AA05A-76F0-4D04-9E41-5D9D912762F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E51AA05A-76F0-4D04-9E41-5D9D912762F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E51AA05A-76F0-4D04-9E41-5D9D912762F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2A2492C-29CC-4726-9C8C-A04544DDF172}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2A2492C-29CC-4726-9C8C-A04544DDF172}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2A2492C-29CC-4726-9C8C-A04544DDF172}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2A2492C-29CC-4726-9C8C-A04544DDF172}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {02F2A321-1409-40FC-8FC2-A99037BC762E}
+	EndGlobalSection
+EndGlobal

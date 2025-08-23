@@ -1,0 +1,5 @@
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=todo-database.postgres.database.azure.com;Database=postgres;Port=5432;Username=postgres;Password=Alex12345;Ssl Mode=Require;"
+  }
+}
