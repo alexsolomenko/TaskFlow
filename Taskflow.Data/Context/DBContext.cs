@@ -10,12 +10,15 @@ using System.Reflection;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
+using Taskflow.Data.Schemas.Models;
 
 namespace Taskflow.Data
 {
     public class AppDBContext: DbContext
     {
         public DbSet<User> Users { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
 
         public AppDBContext() { }
 
@@ -30,6 +33,20 @@ namespace Taskflow.Data
                 .AddJsonFile("dbsettings.json")
                 .Build();
             optionsBuilder.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
+            optionsBuilder.UseSnakeCaseNamingConvention();
+                //.UseLazyLoadingProxies()
+                //.ConfigureWarnings(warnings => warnings.Ignore(CoreEventId.DetachedLazyLoadingWarning));
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Role>().HasData(
+                new Role { Id = 1, Name = "admin", Description = "System administrator" },
+                new Role { Id = 2, Name = "moderator", Description = "Content moderator" },
+                new Role { Id = 3, Name = "user", Description = "User" }
+        );
         }
     }
 
