@@ -6,7 +6,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Taskflow.API.Services
 {
@@ -20,14 +19,14 @@ namespace Taskflow.API.Services
         private readonly string jwtKey;
         private readonly string issuer;
         private readonly string audience;
-        private readonly int _expiryMinutes;
+        private readonly int expiryMinutes;
 
         public JwtService(IConfiguration config)
         {
             jwtKey = config["Jwt:Key"] ?? GenerateTestKey();
             issuer = config["Jwt:Issuer"] ?? "https://test-issuer.com";
             audience = config["Jwt:Audience"] ?? "https://test-audience.com";
-            _expiryMinutes = config.GetValue<int>("Jwt:ExpiryMinutes", 60);
+            expiryMinutes = config.GetValue<int>("Jwt:ExpiryMinutes", 60);
         }
 
         public string GenerateToken(string userId, string userName, List<string> roles)
@@ -42,7 +41,7 @@ namespace Taskflow.API.Services
                     new Claim(ClaimTypes.NameIdentifier, userId),
                     new Claim(ClaimTypes.Name, userName)
                 }.Concat(roles.Select(r => new Claim(ClaimTypes.Role, r)))),
-                Expires = DateTime.UtcNow.AddMinutes(_expiryMinutes),
+                Expires = DateTime.UtcNow.AddMinutes(expiryMinutes),
                 Issuer = issuer,
                 Audience = audience,
                 SigningCredentials = new SigningCredentials(

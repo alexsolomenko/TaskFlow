@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Taskflow.Data.Schemas.Models;
 
 namespace Taskflow.Data;
 
@@ -40,6 +41,33 @@ public class UserRepository : IUserRepository
             .VerifyHashedPassword(user.PasswordHash ?? string.Empty, password);
 
         return passwordVerificationResult ? user : null;
+    }
+
+    public async Task<User?> RegisterUserAsync(string userEmail, string userName, string password)
+    {
+        string email = userEmail.ToLower();
+        string name = userName.ToLower();
+        var user = await _context.Users.FirstOrDefaultAsync(u => (u.Email != null && u.Email.ToLower() == email) || (u.Username != null && u.Username.ToLower() == name));
+        if (user != null)
+            return null;
+
+        user = new User()
+        {
+            Email = userEmail,
+            Username = userName,
+            PasswordHash = _passwordHasher.HashPassword(password),
+            CreatedAt = DateTime.UtcNow
+        };
+        user.UserRoles.Add(new UserRole() { Id = user.Id, });
+
+        var entry = await _context.Users.AddAsync(new User()
+        {
+            Email = userEmail,
+            Username = userName,
+            PasswordHash = _passwordHasher.HashPassword(password),
+            CreatedAt = DateTime.UtcNow
+        });
+        return user;
     }
 
     public async Task<User?> GetUserByIdAsync(int userId)
