@@ -76,4 +76,6 @@ public class UserRepository : IUserRepository
             .Include(u => u.UserRoles)
             .FirstOrDefaultAsync(u => u.Id == userId);
     }
+
+    public async Task<User?> GetUserByEmail()
 }

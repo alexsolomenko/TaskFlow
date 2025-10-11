@@ -32,7 +32,7 @@ namespace Taskflow.Data
                 .SetBasePath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty)
                 .AddJsonFile("dbsettings.json")
                 .Build();
-            optionsBuilder.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
+            optionsBuilder.UseNpgsql(configuration.GetConnectionString("LocalHost"));
             optionsBuilder.UseSnakeCaseNamingConvention();
                 //.UseLazyLoadingProxies()
                 //.ConfigureWarnings(warnings => warnings.Ignore(CoreEventId.DetachedLazyLoadingWarning));
