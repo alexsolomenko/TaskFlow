@@ -10,8 +10,15 @@ namespace Taskflow.Data;
 
 public interface IUserRepository
 {
-    Task<User?> ValidateUserAsync(string username, string password);
+    Task<User?> ValidateUserAsync(
+        string username,
+        string password);
     Task<User?> GetUserByIdAsync(int userId);
+    Task<User> RegisterUserAsync(
+        string userEmail,
+        string? userName,
+        string password,
+        List<string> roleNames);
 }
 
 public class UserRepository : IUserRepository
@@ -19,7 +26,9 @@ public class UserRepository : IUserRepository
     private readonly AppDBContext _context;
     private readonly IPasswordHasher _passwordHasher;
 
-    public UserRepository(AppDBContext context, IPasswordHasher passwordHasher)
+    public UserRepository(
+        AppDBContext context, 
+        IPasswordHasher passwordHasher)
     {
         _context = context;
         _passwordHasher = passwordHasher;
@@ -43,13 +52,19 @@ public class UserRepository : IUserRepository
         return passwordVerificationResult ? user : null;
     }
 
-    public async Task<User?> RegisterUserAsync(string userEmail, string userName, string password)
+    public async Task<User> RegisterUserAsync(
+        string userEmail, 
+        string? userName, 
+        string password, 
+        List<string> roleNames)
     {
         string email = userEmail.ToLower();
-        string name = userName.ToLower();
-        var user = await _context.Users.FirstOrDefaultAsync(u => (u.Email != null && u.Email.ToLower() == email) || (u.Username != null && u.Username.ToLower() == name));
+        string? name = userName?.ToLower();
+        var user = await _context.Users.FirstOrDefaultAsync(u => (u.Email != null && u.Email.ToLower() == email) 
+            || (u.Username != null && u.Username.ToLower() == name));
+
         if (user != null)
-            return null;
+            throw new Exceptions.UserAlreadyExistsException();
 
         user = new User()
         {
@@ -58,15 +73,17 @@ public class UserRepository : IUserRepository
             PasswordHash = _passwordHasher.HashPassword(password),
             CreatedAt = DateTime.UtcNow
         };
-        user.UserRoles.Add(new UserRole() { Id = user.Id, });
 
-        var entry = await _context.Users.AddAsync(new User()
+        var existingRoles = await _context.Roles
+            .Where(r => roleNames.Contains(r.Name)).ToListAsync();
+
+        foreach (var role in existingRoles)
         {
-            Email = userEmail,
-            Username = userName,
-            PasswordHash = _passwordHasher.HashPassword(password),
-            CreatedAt = DateTime.UtcNow
-        });
+            user.UserRoles.Add(new UserRole() { Id = user.Id, RoleId = role.Id });
+        }
+
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync();
         return user;
     }
 
@@ -76,6 +93,4 @@ public class UserRepository : IUserRepository
             .Include(u => u.UserRoles)
             .FirstOrDefaultAsync(u => u.Id == userId);
     }
-
-    public async Task<User?> GetUserByEmail()
 }

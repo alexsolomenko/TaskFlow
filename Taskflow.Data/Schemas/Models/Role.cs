@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection.Emit;
@@ -14,11 +15,11 @@ namespace Taskflow.Data.Schemas.Models;
 public class Role
 {
     public int Id { get; set; }
-    public string? Name { get; set; }
+    public required string Name { get; set; }
     public string? Description { get; set; }
 
     // many to many
-    public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+    public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 }
 
 [Table("user_roles")]
@@ -28,8 +29,8 @@ public class UserRole
     public int UserId { get; set; }
     public int RoleId { get; set; }
 
-    public virtual User? User { get; set; }
-    public virtual Role? Role { get; set; }
+    public User? User { get; }
+    public Role? Role { get; }
 }
 
 public class UserRolesConfiguration : IEntityTypeConfiguration<UserRole>

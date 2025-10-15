@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity.Data;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Taskflow.API.Models;
 using Taskflow.API.Services;
-using Taskflow.Data;
 
 namespace Taskflow.API.Controllers
 {
@@ -9,11 +8,11 @@ namespace Taskflow.API.Controllers
     [Route("api/auth")]
     public class AuthController : Controller
     {
-        private IUserRepository _userService;
+        private Data.IUserRepository _userService;
         private IJwtService _jwtService;
 
         public AuthController(
-            IUserRepository userService,
+            Data.IUserRepository userService,
             IJwtService jwtService)
         {
             _userService = userService;
@@ -30,8 +29,21 @@ namespace Taskflow.API.Controllers
 
             // 2. Генерируем JWT токен
             var token = _jwtService.GenerateToken(user.Id.ToString(), user.Username ?? string.Empty, user.UserRoles.Select(r => r.Role?.Name ?? string.Empty).ToList());
-
             return Ok(new { Token = token });
+        }
+
+        [HttpPost("signup")]
+        public async Task<IActionResult> SignUp([FromBody] SignupRequest request)
+        {
+            try
+            {
+                var user = await _userService.RegisterUserAsync(request.Email, request.UserName, request.Password, request.Roles);
+            }
+            catch (Data.Exceptions.UserAlreadyExistsException err)
+            {
+                return StatusCode(StatusCodes.Status409Conflict, err.Message);
+            }
+            return Ok();
         }
     }
 }
